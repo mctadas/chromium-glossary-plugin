@@ -7,18 +7,19 @@ document.querySelector("#search-term").addEventListener("submit", function(e){
 	    console.log("page-actions pressed SUBMIT");
         e.preventDefault();    //stop form from submitting
         q = document.querySelector("#query").value;
-		var res = "";
-		
-		//get information from ackend
-		chrome.runtime.sendMessage({
-			message: "get_term",
-			query: q		
-			},  response => {
-			    printTermInfo(response.payload);
-		});
-		
-		document.getElementById('answer').innerHTML = q;
-	    
+		if(q.length > 0) {
+			var res = "";
+			
+			//get information from ackend
+			chrome.runtime.sendMessage({
+				message: "get_term",
+				query: q		
+				},  response => {
+					printTermInfo(response.payload);
+			});
+			
+			document.getElementById('answer').innerHTML = q;
+		}
 });
 
 // Format response into web represeantation 
@@ -26,14 +27,14 @@ function printTermInfo(JSON_data){
 	    console.log("JSON: " + JSON_data);
 		if(typeof JSON_data === 'object'){
 			//TODO: add this information to DIV parse JSON and create DIV structure
-			//document.getElementById("glossary-info").innerHTML = JSON.stringify(JSON_data, undefined, 2);
 			
 			if(JSON_data.length > 0){
-				const ce_element_container = document.createElement('DIV');
-				ce_element_container.classList.add('ce_term_info');
-				
+				document.getElementById("glossary-info").innerHTML = "";
+								
 				for (var i = 0; i < JSON_data.length; i++){
-					console.log("el:", JSON_data[i]);
+					const ce_element_container = document.createElement('DIV');
+					ce_element_container.classList.add('ce_term_info');
+					
 					//get dictionary keys and iterate throuhg them
 					for(var key in JSON_data[i]) {
 						const ce_element = document.createElement('P')
@@ -44,15 +45,11 @@ function printTermInfo(JSON_data){
 						}else{
 							ce_element.innerHTML += JSON_data[i][key]; //simple value					
 						}
-						ce_element_container.appendChild(ce_element);
-						
-						console.log(key); // key
-						console.log(JSON_data[i][key]); //value
-						 
+						ce_element_container.appendChild(ce_element);						 
 					}
+					document.getElementById("glossary-info").appendChild(ce_element_container);
 				}
-				document.getElementById("glossary-info").innerHTML = "";
-				document.getElementById("glossary-info").appendChild(ce_element_container);
+				
 			} else {
 				document.getElementById("glossary-info").innerHTML = "Term not found in glossary";
 			}
