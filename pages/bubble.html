@@ -1,0 +1,105 @@
+﻿<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf8">
+	<link rel="stylesheet" href="../css/page-action.css">
+</head>
+
+<body>
+	<div id="body">
+		<header>
+			<form id="search-form" @submit="submit">
+				<input id="q" size="24" x-webkit-speech v-model="term">
+				<input type="submit" value="Define">
+			</form>
+			<div id="autocomplete">
+				<ul class="autocomplete" v-if="suggestions.length">
+					<li :index="$index" class="autocomplete-item" v-for="(suggestion, $index) in suggestions" v-bind:class="{'autocomplete-item-focus': suggestion._focus}" :title="suggestion.title">
+						<div v-html="suggestion.html"></div>
+					</li>
+				</ul>
+			</div>
+			<div id="press_enter">Press Enter to search.</div>
+		</header>
+
+		<article>
+			<div id="search-result" v-if="result">
+				<div id="title">
+					<div v-if="result.source === 'not_found'">
+						<h3>No results found for: <i v-text="term"></i></h3>
+					</div>
+					<div v-if="result.source === 'dictionary'">
+						<h1 v-text="result.hyphenated || result.title"></h1>
+						<div id="meta">
+							<a class="audio_pronunciation" href="#" :data-term="result.title" v-on:click="speak">audio</a>
+							<span v-if="result.pronunciations.pronun1">
+								<abbr title="North American English" v-if="result.pronunciations.pronun1">NAmE.</abbr> /
+								<span class="pronunciation" v-text="result.pronunciations.pronun1" v-if="result.pronunciations.pronun1"></span>/
+							</span>
+							<span v-if="result.pronunciations.pronun2">
+								&nbsp; | &nbsp;
+								<abbr title="British English">BrE.</abbr>/
+								<span class="pronunciation" v-text="result.pronunciations.pronun2"></span>/
+								<!--a class="audio_pronunciation" :href="'https://www.goodwordguide.com/audio/mp3/' + result.pronunciations.en_uk + '.mp3'"
+									title="#" :data-term="result.title" v-on:click="speak">audio</a-->
+							</span>
+						</div>
+					</div>
+					<div class="so_content" id="so_wiki" v-if="result.source == 'wikipedia'">
+						<h2 v-text="result.title"></h2>
+						<div id="so_wiki_caption" v-if="result.caption" v-html="result.caption"></div>
+						<p id="so_wiki_abstr">
+							<span id="so_wiki_abstr_text" v-html="result.abstract"></span>
+							<a v-if="result.abstract" target="_blank" class="so_link_ext" :href="'https://en.wikipedia.org/wiki/' + result.link">Wikipedia</a>
+						</p>
+					</div>
+				</div>
+				<section id="meaning">
+					<div v-for="(order, $count) in result.order">
+
+						<h2>{{result.title}} <span class="word_count">{{$count + 1}}</span> <em>({{poses[order]}})</em></h2>
+
+						<div class="meta" v-if="order === 'a'">
+							<span v-for="(value, $index) in result.adjective_forms">
+								<span v-text="adjectiveFormLabels[$index]"></span>: <b v-text="value"></b>; 
+							</span>
+						</div>
+
+						<div class="meta" v-if="order === 'n'">
+							<span v-for="(value, $index) in result.noun_forms">
+								<span v-text="nounFormLabels[$index]"></span>: <b v-text="value"></b>; 
+							</span>
+						</div>
+
+						<div class="meta" v-if="order === 'v'">
+							<span v-for="(value, $index) in result.verb_forms">
+								<span v-text="verbFormLabels[$index]"></span>: <b v-text="value"></b>; 
+							</span>
+						</div>
+
+						<ol>
+							<li v-for="(definition, $count) in result.definitions[order]">
+								<span class="definition_no"><span v-text="$count + 1"></span>.</span>
+								<span v-text="definition.definition"></span><span v-if=" ! definition.examples">.</span></span><span
+									v-if="definition.examples">:</span>
+								<ul v-if="definition.examples">
+									<li v-for="(example, $index) in definition.examples ? definition.examples.slice(0, 2) : []">{{example}}<span v-if=" ! isLast(definition.examples, $index, 2)">; </span></li>
+								</ul>
+							</li>
+						</ol>
+					</div>
+				</section>
+			</div>
+			<div id="lookup-status"></div>
+			<div id="usage-tip" v-if=" ! result">Tip: Select text on any webpage, then click the 'D' button to view the definition of your selection.</div>
+		</article>
+		<span id="audio"></span>
+
+		<footer>©<span v-text="currentYear"></span> Good Word Guide - <a id="options-link" href="options.html" target="_blank">Extension Options</a></footer>
+	</div>
+	<script src="../js/vue.js"></script>
+	<script src="../js/page-action.js"></script>
+</body>
+
+</html>

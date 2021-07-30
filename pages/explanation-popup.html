@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+
+<head>
+   <meta charset="utf8" />
+   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap">
+   <style type="text/css">
+    #pebble {
+		position: absolute;
+		top: 10px;
+	}
+	#title {
+		position: relative;
+        left: 42px;
+        margin-top: 10px;
+	}
+    #answer {
+      border-bottom: 1px dashed #ccc;
+      margin-bottom: 5px;
+      padding-bottom: 5px;
+	  font-size: 1.1em;
+      font-style: italic;
+      font-weight: bold;
+      color: #018282;
+    }
+	#footer-line {
+      border-top: 1px dashed #ccc;
+      margin-bottom: 5px;
+      padding-bottom: 5px;
+	  
+    }
+	
+   </style>
+
+</head>
+
+<body style="width:400px;font-size:1em">
+    <img id=pebble src="../images/telia-pebble.jpg" height="30px">
+	<h2 id=title>Telia glossary</h2>
+    <!-- 
+	<p>To see the Telia's definition of the term, <b><i>double click</i></b> on the word and pupup buble should appear.</p>
+	-->	
+	<header>
+			<form id="search-term" @submit="submit">
+				<input id="query" size="24">
+				<input type="submit" value="Define">
+			</form>
+			<div id="press_enter" style="font-size:0.8em">Press Enter to get term description.</div>
+	</header>
+	
+	<article>
+	<div id="answer"></div>
+	<div id=glossary-info></div>
+	</article>
+	
+	<br>
+	<footer id="footer-line">
+	    <a href="https://teliacompanyspace.sharepoint.com/sites/Glossary2" target="_blank">Glossary terms</a>
+	    <a href="https://teliacompanyspace.sharepoint.com/sites/Glossary2/Lists/Telia%20Company%20Abbreviations/AllItems.aspx" target="_blank">Abbreviations</a>
+	</footer>
+	
+	<p>
+	<!--
+	<b>Comming soon:</b><br>
+	# selected text and all mathing terms listed here <br>
+	# pop-up results window on selected work on the page <br>
+	# highligh words in Telia abreviations or glosary <br>
+	# create configurable reqouceses
+	</p>
+	-->
+	
+	<script src="../js/page-actions.js"></script>
+</body>
+
+</html>
