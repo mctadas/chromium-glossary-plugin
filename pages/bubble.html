@@ -11,7 +11,7 @@
 		<header>
 			<form id="search-form" @submit="submit">
 				<input id="q" size="24" x-webkit-speech v-model="term">
-				<input type="submit" value="Define">
+				<input type="submit" value="Define" id="searchbtn">
 			</form>
 			<div id="autocomplete">
 				<ul class="autocomplete" v-if="suggestions.length">

@@ -1,43 +1,36 @@
-console.log('from background.js')
-const url = chrome.extension.getURL('../data/telia-glossary.json');
+const url = "https://api.dictionaryapi.dev/api/v2/entries/en/";
 
-// load JSON file into memmory on install
+/*
+Not removing this since it can be useful if we wanna load the entire dictionary 
 chrome.runtime.onInstalled.addListener(() => {
 	fetch(url)
-        .then((response) => response.json()) //assuming file contains json
-        .then((json) => storeGlossary(json));
-	console.log("glossary stored on a local mashine");
+		.then((response) => response.json()) //assuming file contains json
+		.then((json) => storeGlossary(json));
 });
 
 function storeGlossary(json) {
-    chrome.storage.local.set({
-	     terms: json	
-    });	
+	chrome.storage.local.set({
+		 terms: json	
+	});	
 }
+*/
 
-chrome.runtime.onMessage.addListener(( request, sender, sendResponse) => {
-	console.log("get request: ", request);
-	
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 	if (request.message === 'get_term') {
+		console.log("Term")
 		let query = request.query;
 		let result_array = [];
-		chrome.storage.local.get('terms', data => {
-			//TODO: make a search function out of it
-			
-			for (var i = 0; i < data.terms.length; i++){
-				if(data.terms[i].Term.toLowerCase().includes(query.toLowerCase()) ||
-				   //data.terms[i].Term.toLowerCase() == query.toLowerCase() || //search for exact term
-				   data.terms[i].Acronym.toLowerCase() == query.toLowerCase())
-				{
-					result_array.push(data.terms[i]);	
-				}
-			}
-			sendResponse({
-				message: 'success',
-				query: query,
-				payload: result_array
-			});			
-		});
+		fetch(url + query)
+			.then((response) => response.json())
+			.then((json) => {
+				console.log(json);
+				sendResponse({
+					message: 'success',
+					query: query,
+					payload: json
+				});
+			});
+
 	}
 	return true;
 });

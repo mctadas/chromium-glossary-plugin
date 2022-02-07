@@ -2,65 +2,111 @@
 <html>
 
 <head>
-   <meta charset="utf8" />
-   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap">
-   <style type="text/css">
-    #pebble {
-		position: absolute;
-		top: 10px;
-	}
-	#title {
-		position: relative;
-        left: 42px;
-        margin-top: 10px;
-	}
-    #answer {
-      border-bottom: 1px dashed #ccc;
-      margin-bottom: 5px;
-      padding-bottom: 5px;
-	  font-size: 1.1em;
-      font-style: italic;
-      font-weight: bold;
-      color: #018282;
-    }
-	.ce_term_info {
-      margin: 10px 10px 30px 10px;
-      padding: 10px 10px;
-      background: #f1e3ff;
-      border-radius: 20px;
-    }
-	
-   </style>
+	<meta charset="utf8" />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap">
+	<style type="text/css">
+		#pebble {
+			position: absolute;
+			top: 10px;
+		}
+
+		#title {
+			position: relative;
+			left: 42px;
+			margin-top: 10px;
+		}
+
+		#answer {
+			border-bottom: 1px dashed #ccc;
+			margin-bottom: 5px;
+			padding-bottom: 5px;
+			font-size: 1.1em;
+			font-style: italic;
+			font-weight: bold;
+			color: #018282;
+		}
+
+		.ce_term_info {
+			margin: 10px 10px 30px 10px;
+			padding: 10px 10px;
+			background: #f1e3ff;
+			border-radius: 20px;
+		}
+
+		#history_link {
+			cursor: pointer;
+			color: blue;
+			padding-right: 10px;
+		}
+
+		h4.historytxt {
+			padding-bottom: 0;
+			margin-bottom: 0;
+		}
+
+		#history {
+			padding-bottom: 10px;
+		}
+
+		#audio_pronunciation {
+			background: url('./../images/pronunciation.png') no-repeat;
+			display: inline-block;
+			height: 16px;
+			margin: 0 15px 0 0;
+			padding: 0;
+			background-size: contain;
+			vertical-align: middle;
+			width: 25px;
+			cursor: pointer;
+			margin-left: 20px;
+		}
+
+		.title_h1,
+		.ce_term_title {
+			display: inline-block;
+		}
+
+		.ca_title_container {
+			border-bottom: 1px dashed #ccc;
+			margin-bottom: 5px;
+			padding-bottom: 5px;
+		}
+	</style>
 
 </head>
 
 <body style="width:400px;font-size:1em">
-    <img id=pebble src="../images/telia-pebble.jpg" height="30px">
+	<img id=pebble src="../images/telia-pebble.jpg" height="30px">
 	<h2 id=title>Telia glossary</h2>
-    <!-- 
+	<!-- 
 	<p>To see the Telia's definition of the term, <b><i>double click</i></b> on the word and pupup buble should appear.</p>
-	-->	
+	-->
 	<header>
-			<form id="search-term" @submit="submit">
-				<input id="query" size="24">
-				<input type="submit" value="Define">
-			</form>
-			<div id="press_enter" style="font-size:0.8em">Press Enter to get term description.</div>
+		<form id="search-term" @submit="submit">
+			<input id="query" size="24">
+			<input type="submit" value="Define" id="submitbtn">
+		</form>
+		<div id="press_enter" style="font-size:0.8em">Press Enter to get term description.</div>
 	</header>
-	
+
 	<article>
-	<div id="answer"></div>
-	<div id=glossary-info></div>
+		<div id="answer"></div>
+		<div id=glossary-info></div>
 	</article>
-	
+
 	<br>
+	<h4 class="historytxt">History</h4>
+	<div id="history">
+
+	</div>
 	<footer id="footer-line">
-	    <a href="https://teliacompanyspace.sharepoint.com/sites/Glossary2" target="_blank">Glossary terms</a> | 
-	    <a href="https://teliacompanyspace.sharepoint.com/sites/Glossary2/Lists/Telia%20Company%20Abbreviations/AllItems.aspx" target="_blank">Abbreviations</a>
+		<a href="https://teliacompanyspace.sharepoint.com/sites/Glossary2" target="_blank">Glossary terms</a> |
+		<a href="https://teliacompanyspace.sharepoint.com/sites/Glossary2/Lists/Telia%20Company%20Abbreviations/AllItems.aspx"
+			target="_blank">Abbreviations</a>
 	</footer>
-	
+
 	<p>
-	<!--
+		<!--
 	<b>Comming soon:</b><br>
 	# selected text and all mathing terms listed here <br>
 	# pop-up results window on selected work on the page <br>
@@ -68,8 +114,8 @@
 	# create configurable reqouceses
 	</p>
 	-->
-	
-	<script src="../js/page-actions.js"></script>
+
+		<script src="../js/page-actions.js"></script>
 </body>
 
 </html>
