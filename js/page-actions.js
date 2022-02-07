@@ -57,6 +57,19 @@ document.querySelector("#search-term").addEventListener("submit", function (e) {
 	}
 });
 
+function printNestedValue(obj) {
+	let string = ""
+	for (var key in obj) {
+		if (typeof obj[key] === "object") {
+			printNestedValue(obj[key]);
+		}
+		if (typeof obj[key] === 'string') {
+			string += obj[key] + " ";
+		}
+	}
+	return string;
+}
+
 // Format response into web represeantation 
 function printTermInfo(JSON_data) {
 	if (typeof JSON_data === 'object') {
@@ -74,7 +87,7 @@ function printTermInfo(JSON_data) {
 				const ca_element_h1 = document.createElement("h1");
 				ca_element_h1.innerHTML = JSON_data[i].word
 				ca_element_h1.classList.add("title_h1")
-				
+
 				// Create metainfo
 				const ca_element_meta = document.createElement("div");
 				ca_element_meta.classList.add('ce_term_title');
@@ -95,7 +108,7 @@ function printTermInfo(JSON_data) {
 
 				const meaning = document.createElement('span');
 				meaning.id = "meaning";
-				meaning.innerHTML = JSON_data[i].meanings[0].definitions[0].definition
+				meaning.innerHTML = printNestedValue(JSON_data[i])
 
 				ce_element_container.appendChild(meaning);
 
