@@ -2,7 +2,7 @@
    "name": "Glossary",
    "description": "extension that shows connected terms of the displayed text",
    "short_name": "Glossary Bubble",
-   "version": "0.2",
+   "version": "0.3",
    "icons": {
       "16": "./images/glossary-16x16.png",
       "32": "./images/glossary-32x32.png",
@@ -10,21 +10,40 @@
       "128": "./images/glossary-128x128.png"
    },
    "background": {
-      "scripts": ["./js/background.js"]
+      "service_worker": "./js/background.js"
    },
    "options_page": "./pages/options.html",
-   "browser_action": {
+   "action": {
       "default_icon": "./images/glossary-128x128.png",
       "default_popup": "./pages/explanation-popup.html",
       "default_title": "Click here to quickly view word definitions for selected word."
    },
+   "content_scripts": [
+      {
+         "all_frames": true,
+         "exclude_matches": [
+            "*://*.teliacompanyspace.sharepoint.com/*"
+         ],
+         "js": [
+            "./js/foreground.js"
+         ],
+         "matches": [
+            "http://*/*",
+            "https://*/*"
+         ],
+         "run_at": "document_end"
+      }
+   ],
    "omnibox": {
       "keyword": "glossary"
    },
-   "permissions": [ "activeTab", "alarms", "contextMenus", "storage" ],
-   "manifest_version": 2,
-   "web_accessible_resources": [
-       "./data/telia-glosary.json",
-	   "https://teliacompanyspace.sharepoint.com/*"
-   ]
+   "permissions": [
+      "activeTab",
+      "alarms",
+      "contextMenus",
+      "storage",
+      "scripting",
+      "tabs"
+   ],
+   "manifest_version": 3
 }

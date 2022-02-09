@@ -17,20 +17,36 @@ function storeGlossary(json) {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 	if (request.message === 'get_term') {
-		console.log("Term")
 		let query = request.query;
-		let result_array = [];
-		fetch(url + query)
+		fetch('./../data/telia-glossary.json')
 			.then((response) => response.json())
 			.then((json) => {
-				console.log(json);
+				let result_array = json.filter(item => item.Term && item.Term.toLowerCase().includes(query.toLowerCase()));
+				
+				if(result_array.length > 1) {
+					result_array.sort((a,b) => 
+					(b.Term.toLowerCase() === query.toLowerCase()) - (a.Term.toLowerCase() === query.toLowerCase()))
+				}
+				
 				sendResponse({
 					message: 'success',
 					query: query,
-					payload: json
+					payload: result_array
 				});
 			});
 
 	}
+
+	if (request.message === "selected_word") {
+		console.log(request.query)
+		// This should be sent to the popup
+	}
+	
 	return true;
+});
+
+chrome.tabs.onUpdated.addListener(function(tab) {
+    chrome.tabs.executeScript({
+        file: './foreground.js'
+    }); 
 });

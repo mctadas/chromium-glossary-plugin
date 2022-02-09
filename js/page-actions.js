@@ -1,4 +1,3 @@
-const history = chrome.extension.getURL('../data/history.json');
 const url = "https://api.dictionaryapi.dev/api/v2/entries/en/";
 var json = JSON.parse(localStorage.getItem("history")) || [];
 
@@ -49,7 +48,7 @@ document.querySelector("#search-term").addEventListener("submit", function (e) {
 			message: "get_term",
 			query: q
 		}, response => {
-			printTermInfo(response.payload);
+			printTermInfo(response.payload, q);
 		});
 
 		document.getElementById('answer').innerHTML = q;
@@ -58,16 +57,16 @@ document.querySelector("#search-term").addEventListener("submit", function (e) {
 });
 
 function printNestedValue(obj) {
-	let string = ""
+	let element = ""
 	for (var key in obj) {
 		if (typeof obj[key] === "object") {
 			printNestedValue(obj[key]);
 		}
-		if (typeof obj[key] === 'string') {
-			string += obj[key] + " ";
+		if (typeof obj[key] === 'string' && obj[key] !== "") {
+			element += "<span style='display:block'><b>" + key + ":</b> " + obj[key] + "</span>"
 		}
 	}
-	return string;
+	return element;
 }
 
 // Format response into web represeantation 
@@ -83,26 +82,10 @@ function printTermInfo(JSON_data) {
 				const ca_element_title_container = document.createElement('DIV');
 				ca_element_title_container.classList.add("ca_title_container")
 
-				// Create title
-				const ca_element_h1 = document.createElement("h1");
-				ca_element_h1.innerHTML = JSON_data[i].word
-				ca_element_h1.classList.add("title_h1")
-
 				// Create metainfo
 				const ca_element_meta = document.createElement("div");
 				ca_element_meta.classList.add('ce_term_title');
 
-				const phonetics = document.createElement('span');
-				phonetics.id = "audio_pronunciation"
-				const audioUrl = JSON_data[i].phonetics[0].audio;
-				phonetics.onclick = function (e) {
-					console.log(audioUrl);
-					var audio = new Audio(audioUrl);
-					audio.play();
-				}
-
-				ca_element_meta.appendChild(phonetics);
-				ca_element_title_container.appendChild(ca_element_h1);
 				ca_element_title_container.appendChild(ca_element_meta);
 				ce_element_container.appendChild(ca_element_title_container);
 
