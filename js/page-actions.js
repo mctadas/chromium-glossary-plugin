@@ -1,21 +1,26 @@
-const url = "https://api.dictionaryapi.dev/api/v2/entries/en/";
 var json = JSON.parse(localStorage.getItem("history")) || [];
+var shouldHistoryBeOn;
 
 (function () {
-	if (json && json.length > 0) {
-		appendToHistoryHTML()
-	}
+	chrome.storage.local.get('options', data => {
+		shouldHistoryBeOn = data.options && data.options.wordHistory;
+		if (json && json.length > 0) {
+			appendToHistoryHTML()
+		}
+	});
 })();
 
 function appendToHistoryHTML() {
-	const parentElement = document.querySelector("#history");
-	parentElement.innerHTML = ""
-	for (var i = 0; i < json.length; i++) {
-		var item = json[i];
-		var history_container = document.createElement('a');
-		history_container.setAttribute('id', 'history_link');
-		history_container.text = item;
-		parentElement.appendChild(history_container);
+	if (shouldHistoryBeOn) {
+		const parentElement = document.querySelector("#history");
+		parentElement.innerHTML = ""
+		for (var i = 0; i < json.length; i++) {
+			var item = json[i];
+			var history_container = document.createElement('a');
+			history_container.setAttribute('id', 'history_link');
+			history_container.text = item;
+			parentElement.appendChild(history_container);
+		}
 	}
 }
 

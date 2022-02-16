@@ -60,7 +60,7 @@
         return btn;
     }
 
-    function drawDictionary(payload, word) {
+    function drawDictionary(payload, word, fontSize) {
         const main = document.createElement("div");
         main.id = "telia-bubble-main-dictionary";
         main.style.overflowY = "auto";
@@ -70,20 +70,22 @@
         mainTitle.style.display = "block";
         mainTitle.innerHTML = word;
         main.appendChild(mainTitle);
-        if(payload.length > 0) {
+        if (payload.length > 0) {
             for (var i = 0; i < payload.length; i++) {
                 const mainWords = document.createElement("div");
                 mainWords.innerHTML = printNestedValue(payload[i])
                 mainWords.style.marginTop = "10px";
                 mainWords.style.marginTop = "10px";
-                mainWords.style.padding ="10px 10px"
-                mainWords.style.background ="#f1e3ff";
+                mainWords.style.padding = "10px 10px"
+                mainWords.style.background = "#f1e3ff";
+                mainWords.style.fontSize = fontSize;
                 main.appendChild(mainWords)
             }
         } else {
             const mainWords = document.createElement("div");
             mainWords.innerHTML = "No results found for this word."
-            mainWords.marginTop = "15px";
+            mainWords.style.marginTop = "15px";
+            mainWords.style.fontSize = fontSize;
             main.appendChild(mainWords)
         }
         return main;
@@ -112,13 +114,13 @@
         return arrowContainer;
     }
 
-    function drawFrame(leftPosition, topPosition, payload, word) {
+    function drawFrame(leftPosition, topPosition, payload, word, fontSize) {
         const wrapper = drawWrapper(topPosition, leftPosition);
         const floatingContainer = drawFloatingContainer(topPosition, leftPosition);
         const arrow = drawArrow();
         const closeBtn = drawCloseButton();
         const content = drawContent();
-        const mainDictionary = drawDictionary(payload, word)
+        const mainDictionary = drawDictionary(payload, word, fontSize)
 
         floatingContainer.appendChild(closeBtn)
         content.appendChild(mainDictionary);
@@ -129,27 +131,60 @@
         htmlDoc.appendChild(wrapper);
     }
 
-    document.onmouseup = function (e) {
-        var sel = window.getSelection()
-        var scrollTop = (window.pageYOffset !== undefined)
-            ? window.pageYOffset :
-            (document.documentElement || document.body.parentNode || document.body).scrollTop;
-        const currentPopup = document.getElementById("telia-bubble-host")
-        
-        if (currentPopup) {
-            currentPopup.remove();
+    function checkKeyPressed(key, e) {
+        if (key !== "1") {
+            if (key === "2" && e.ctrlKey) {
+                return true;
+            } else if (key === "3" && e.altKey) {
+                return true;
+            } else if (key === "4" && e.shiftKey) {
+                return true;
+            } else {
+                return false;
+            }
         }
+        return true;
+    }
 
-        const word = sel.toString();
-        if (word.length > 0) {
-            const posX = e.clientX - 110;
-            const posY = e.clientY + scrollTop;
-            chrome.runtime.sendMessage({
-                message: "get_term",
-                query: word
-            }, response => {
-                drawFrame(posX, posY, response.payload, word);
-            });
-        }
+    async function loadConfig(e) {
+        await chrome.storage.local.get('options', data => {
+            let keyToPress = "";
+            let fontSize = "";
+            if (data.options) {
+                fontSize = data.options.fontSize + "px";
+                keyToPress = data.options.triggerKey;
+            }
+
+            var sel = window.getSelection()
+            var scrollTop = (window.pageYOffset !== undefined)
+                ? window.pageYOffset :
+                (document.documentElement || document.body.parentNode || document.body).scrollTop;
+            const currentPopup = document.getElementById("telia-bubble-host")
+
+            if (currentPopup) {
+                currentPopup.remove();
+            }
+
+            const word = sel.toString();
+            if (word.length > 0 && checkKeyPressed(keyToPress, e)) {
+                const posX = e.clientX - 110;
+                const posY = e.clientY + scrollTop;
+                chrome.runtime.sendMessage({
+                    message: "get_term",
+                    query: word
+                }, response => {
+                    drawFrame(posX, posY, response.payload, word, fontSize);
+                });
+                
+                chrome.runtime.sendMessage({
+                    message: "selected_word",
+                    query: word
+                });
+            }
+        });
+    }
+
+    document.onmouseup = function async(e) {
+        loadConfig(e)
     };
 })();
