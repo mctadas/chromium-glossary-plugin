@@ -58,12 +58,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 				query: query,
 				payload: result_array
 			});
-
-			if (request.message === "selected_word") {
-				const searchBox = document.querySelector("#query");
-				searchBox.value = request.query;
-			}
 		}
 	});
+	if (request.message === "update_glossory") {
+		configExtension();
+	}
 	return true;
 });

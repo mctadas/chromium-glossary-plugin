@@ -33,6 +33,11 @@ function saveFunc() {
             wordHistory: word_history.checked
         }
     });
+    chrome.runtime.sendMessage({
+        message: "update_glossory",
+        query: api_input.values
+    });
+    
     alert("Saved")
 }
 

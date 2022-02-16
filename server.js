@@ -1,11 +1,15 @@
 const mockedData = require("./data/telia-glossary.json");
-var http = require('http');
+const express = require("express");
+const app = express();  //Create new instance
+const PORT =  8081; 
+app.use(express.json()); 
+//Define the endpoint
 
+app.get("/glossory", (req, res) => {  
+    console.log("Glossory sent")
+  return res.send(mockedData);
+});
 
-http.createServer(function (request, response) {
-    response.setHeader('Content-Type', 'application/json');
-    response.end(mockedData);
- }).listen(8081);
- 
- // Console will print the message
- console.log('Server running at http://127.0.0.1:8081/');
+app.listen(PORT, () => {
+  console.log("Server started listening on port : ", PORT);
+});
