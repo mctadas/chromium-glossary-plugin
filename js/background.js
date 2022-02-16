@@ -1,4 +1,4 @@
-chrome.windows.onCreated.addListener(() => {
+function configExtension() {
 	chrome.storage.local.get('options', data => {
 		let apiUrl;
 		if (!data.options) {
@@ -9,7 +9,7 @@ chrome.windows.onCreated.addListener(() => {
 				wordHistory: true
 			}
 			apiUrl = './../data/telia-glossary.json';
-
+			
 			chrome.storage.local.set({
 				options: defaultValues
 			});
@@ -23,6 +23,14 @@ chrome.windows.onCreated.addListener(() => {
 				storeGlossary(json);
 			});
 	});
+}
+
+chrome.runtime.onInstalled.addListener(() => {
+	configExtension();
+})
+
+chrome.windows.onCreated.addListener(() => {
+	configExtension();
 });
 
 
