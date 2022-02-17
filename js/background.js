@@ -20,7 +20,11 @@ function configExtension() {
 		fetch(apiUrl)
 			.then((response) => response.json())
 			.then((json) => {
-				storeGlossary(json.data);
+				if(json.data) {
+					storeGlossary(json.data);
+				} else {
+					storeGlossary(json);
+				}
 			});
 	});
 }
