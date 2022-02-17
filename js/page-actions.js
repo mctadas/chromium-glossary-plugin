@@ -61,27 +61,32 @@ document.querySelector("#search-term").addEventListener("submit", function (e) {
 	}
 });
 
-function printNestedValue(obj) {
+function printNestedValue(obj, word) {
 	let element = ""
 	for (var key in obj) {
 		if (typeof obj[key] === "object") {
 			printNestedValue(obj[key]);
 		}
 		if (typeof obj[key] === 'string' && obj[key] !== "") {
-			element += "<span style='display:block'><b>" + key + ":</b> " + obj[key] + "</span>"
+			const reg = new RegExp(word, 'gi');
+			const highLightWord = obj[key].replace(reg, function (str) { return "<bdi style='background-color:yellow;color:#000'>" + str + "</bdi>" });
+			element += "<span style='display:block;'><b>" + key + ":</b> " + highLightWord + "</span>"
 		}
 	}
 	return element;
 }
 
 // Format response into web represeantation 
-function printTermInfo(JSON_data) {
+function printTermInfo(JSON_data, word) {
 	if (typeof JSON_data === 'object') {
 		if (JSON_data.length > 0) {
 			document.getElementById("glossary-info").innerHTML = "";
 			for (var i = 0; i < JSON_data.length; i++) {
 				const ce_element_container = document.createElement('DIV');
 				ce_element_container.classList.add('ce_term_info');
+
+				const numberOfHits = document.getElementById("number_of_hits");
+				numberOfHits.innerHTML = "Number of hits: " + JSON_data.length;
 
 				// Create title container
 				const ca_element_title_container = document.createElement('DIV');
@@ -96,7 +101,7 @@ function printTermInfo(JSON_data) {
 
 				const meaning = document.createElement('span');
 				meaning.id = "meaning";
-				meaning.innerHTML = printNestedValue(JSON_data[i])
+				meaning.innerHTML = printNestedValue(JSON_data[i], word)
 
 				ce_element_container.appendChild(meaning);
 

@@ -1,12 +1,15 @@
 (function () {
-    function printNestedValue(obj) {
+
+    function printNestedValue(obj, word) {
         let element = ""
         for (var key in obj) {
             if (typeof obj[key] === "object") {
                 printNestedValue(obj[key]);
             }
             if (typeof obj[key] === 'string' && obj[key] !== "") {
-                element += "<span style='display:block; margin-top:10px;'><b>" + key + ":</b> " + obj[key] + "</span>"
+                const reg = new RegExp(word, 'gi');
+                const highLightWord = obj[key].replace(reg, function (str) { return "<bdi style='background-color:yellow;color:#000'>" + str + "</bdi>" });
+                element += "<span style='display:block; margin-top:10px;'><b>" + key + ":</b> " + highLightWord + "</span>"
             }
         }
         return element;
@@ -64,16 +67,24 @@
         const main = document.createElement("div");
         main.id = "telia-bubble-main-dictionary";
         main.style.overflowY = "auto";
+        main.style.maxHeight = "300px";
         const mainTitle = document.createElement("div");
         mainTitle.id = "telia-bubble-main-dictionary-title";
         mainTitle.style.color = "rgb(228, 21, 19)";
         mainTitle.style.display = "block";
         mainTitle.innerHTML = word;
+
+        const numberOfHits = document.createElement("span");
+        numberOfHits.style.float = "right";
+        numberOfHits.innerHTML = "Number of hits: " + payload.length;
+        numberOfHits.style.color = "rgb(228, 21, 19)";
+
+        main.appendChild(numberOfHits);
         main.appendChild(mainTitle);
         if (payload.length > 0) {
             for (var i = 0; i < payload.length; i++) {
                 const mainWords = document.createElement("div");
-                mainWords.innerHTML = printNestedValue(payload[i])
+                mainWords.innerHTML = printNestedValue(payload[i], word)
                 mainWords.style.marginTop = "10px";
                 mainWords.style.marginTop = "10px";
                 mainWords.style.padding = "10px 10px"
@@ -175,7 +186,7 @@
                 }, response => {
                     drawFrame(posX, posY, response.payload, word, fontSize);
                 });
-                
+
                 chrome.runtime.sendMessage({
                     message: "selected_word",
                     query: word
