@@ -1,39 +1,54 @@
-var json = JSON.parse(localStorage.getItem("history")) || [];
 var shouldHistoryBeOn;
 
 (function () {
 	chrome.storage.local.get('options', data => {
 		shouldHistoryBeOn = data.options && data.options.wordHistory;
-		if (json && json.length > 0) {
-			appendToHistoryHTML()
-		}
+		appendToHistoryHTML()
 	});
 })();
 
-function appendToHistoryHTML() {
+function appendToHistoryHTML(shouldAddNew = false, word = "") {
 	if (shouldHistoryBeOn) {
-		const parentElement = document.querySelector("#history");
-		parentElement.innerHTML = ""
-		for (var i = 0; i < json.length; i++) {
-			var item = json[i];
-			var history_container = document.createElement('a');
-			history_container.setAttribute('id', 'history_link');
-			history_container.text = item;
-			parentElement.appendChild(history_container);
-		}
+		chrome.storage.local.get('history', data => {
+			const parentElement = document.querySelector("#history");
+			parentElement.innerHTML = ""
+			if(shouldAddNew) {
+				var history_container = document.createElement('a');
+				history_container.setAttribute('id', 'history_link');
+				history_container.text = word;
+				parentElement.appendChild(history_container);		
+			} else if (data.history) {
+				for (var i = 0; i < data.history.length; i++) {
+					var item = data.history[i];
+					var history_container = document.createElement('a');
+					history_container.setAttribute('id', 'history_link');
+					history_container.text = item;
+					parentElement.appendChild(history_container);
+				}
+			}
+		});
 	}
 }
 
 function addToHistoryLocalStorage(item) {
-	let unique = json.includes(item)
-	if (!unique) {
-		if (json.length === 3) {
-			json.shift();
+	chrome.storage.local.get('history', data => {
+		let unique = false
+		if(data.history) {
+			unique = data.history.includes(item)
 		}
-		json.push(item);
-		localStorage.setItem("history", JSON.stringify(json))
-	}
-	appendToHistoryHTML();
+		
+		if (!unique) {
+			let json = data.history || [];
+			if (json.length === 3) {
+				json.shift();
+			}
+			json.push(item);
+			chrome.storage.local.set({
+				history: json
+			});
+			appendToHistoryHTML(true, item);
+		}
+	});
 }
 
 document.addEventListener('click', function (e) {
@@ -70,8 +85,8 @@ function printNestedValue(obj, word) {
 		if (typeof obj[key] === 'string' && obj[key] !== "") {
 			const reg = new RegExp(word, 'gi');
 			const urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
-			let highLightWord = obj[key].replace(reg, function (str) { 
-				return "<bdi style='background-color:yellow;color:#000'>" + str + "</bdi>" 
+			let highLightWord = obj[key].replace(reg, function (str) {
+				return "<bdi style='background-color:yellow;color:#000'>" + str + "</bdi>"
 			});
 
 			highLightWord = highLightWord.replace(urlRegex, function (url) {
