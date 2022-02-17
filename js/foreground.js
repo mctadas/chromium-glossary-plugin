@@ -8,8 +8,9 @@
             }
             if (typeof obj[key] === 'string' && obj[key] !== "") {
                 const reg = new RegExp(word, 'gi');
-                let highLightWord = obj[key].replace(reg, function (str) { 
-                    return "<bdi style='background-color:yellow;color:#000'>" + str + "</bdi>" 
+                const urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
+                let highLightWord = obj[key].replace(reg, function (str) {
+                    return "<bdi style='background-color:yellow;color:#000'>" + str + "</bdi>"
                 });
                 highLightWord = highLightWord.replace(urlRegex, function (url) {
                     let hyperlink = url;
