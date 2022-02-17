@@ -69,7 +69,19 @@ function printNestedValue(obj, word) {
 		}
 		if (typeof obj[key] === 'string' && obj[key] !== "") {
 			const reg = new RegExp(word, 'gi');
-			const highLightWord = obj[key].replace(reg, function (str) { return "<bdi style='background-color:yellow;color:#000'>" + str + "</bdi>" });
+			const urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
+			let highLightWord = obj[key].replace(reg, function (str) { 
+				return "<bdi style='background-color:yellow;color:#000'>" + str + "</bdi>" 
+			});
+
+			highLightWord = highLightWord.replace(urlRegex, function (url) {
+				let hyperlink = url;
+				if (!hyperlink.match('^https?:\/\/')) {
+					hyperlink = 'http://' + hyperlink;
+				}
+				return '<a href="' + hyperlink + '" target="_blank" rel="noopener noreferrer">' + url + '</a>'
+			});
+
 			element += "<span style='display:block;'><b>" + key + ":</b> " + highLightWord + "</span>"
 		}
 	}
