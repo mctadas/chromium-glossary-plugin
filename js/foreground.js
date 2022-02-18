@@ -43,16 +43,22 @@
         return element;
     }
 
-    function drawWrapper(top, left) {
+    function isElementXPercentInViewport(maxHeight, leftPosition) {
+        const parentElement = window.getSelection().focusNode.parentNode.getBoundingClientRect();
+        return (parentElement.y > 0 && parentElement.y + maxHeight) < window.innerHeight;
+      };
+
+    function drawWrapper(top, left, shouldBeOnTop, maxHeight) {
         const wrapper = document.createElement("div");
+        const parentElement = window.getSelection().focusNode.parentNode.getBoundingClientRect();
         wrapper.id = "telia-bubble-host";
         wrapper.style.position = "absolute";
-        wrapper.style.top = top + "px";
+        wrapper.style.top = shouldBeOnTop ? top + "px" : (top - maxHeight) + "px";
         wrapper.style.left = left + "px";
         return wrapper;
     }
 
-    function drawFloatingContainer(top, left) {
+    function drawFloatingContainer() {
         const floatingContainer = document.createElement("div");
         floatingContainer.id = "telia-bubble-host";
         floatingContainer.style.width = "auto";
@@ -95,7 +101,7 @@
         const main = document.createElement("div");
         main.id = "telia-bubble-main-dictionary";
         main.style.overflowY = "auto";
-        main.style.maxHeight = "300px";
+        main.style.maxHeight = "200px";
         const mainTitle = document.createElement("div");
         mainTitle.id = "telia-bubble-main-dictionary-title";
         mainTitle.style.color = "rgb(228, 21, 19)";
@@ -130,33 +136,11 @@
         return main;
     }
 
-    function drawArrow() {
-        const arrowContainer = document.createElement("div");
-        arrowContainer.style.display = "block";
-        arrowContainer.style.zIndex = "99999999";
-
-        const arrow = document.createElement("div");
-        arrow.id = "telia-bubble-arrow";
-        arrow.style.position = "relative";
-        arrow.style.display = "inline-block"
-        arrow.style.verticalAlign = "middle";
-        arrow.style.boxSizing = "border-box"
-        arrow.style.left = "50%";
-        arrow.style.width = "0";
-        arrow.style.height = "0";
-        arrow.style.border = "7px solid transparent";
-        arrow.style.borderTop = "7px solid transparent";
-        arrow.style.borderBottom = "7px solid";
-        arrow.style.top = "2px";
-        arrowContainer.appendChild(arrow);
-
-        return arrowContainer;
-    }
-
     function drawFrame(leftPosition, topPosition, payload, word, fontSize) {
-        const wrapper = drawWrapper(topPosition, leftPosition);
-        const floatingContainer = drawFloatingContainer(topPosition, leftPosition);
-        const arrow = drawArrow();
+        const maxHeight = payload.length > 0 ? 200 : 80;
+        const shouldBeOnTop = isElementXPercentInViewport(maxHeight, leftPosition);
+        const wrapper = drawWrapper(topPosition, leftPosition, shouldBeOnTop, maxHeight);
+        const floatingContainer = drawFloatingContainer();
         const closeBtn = drawCloseButton();
         const content = drawContent();
         const mainDictionary = drawDictionary(payload, word, fontSize)
@@ -164,7 +148,6 @@
         floatingContainer.appendChild(closeBtn)
         content.appendChild(mainDictionary);
         floatingContainer.appendChild(content);
-        wrapper.appendChild(arrow);
         wrapper.appendChild(floatingContainer)
         const htmlDoc = document.documentElement;
         htmlDoc.appendChild(wrapper);
@@ -207,15 +190,16 @@
             const word = sel.toString();
             const splitWord = word.split(/(\s+)/).filter(item => {
                 const temp = item.trim();
-                if(temp.length > 0) {
+                if (temp.length > 0) {
                     return temp;
                 }
             });
 
-            if (word.length > 0 
-                && checkKeyPressed(keyToPress, e) 
+            if (word.length > 0
+                && checkKeyPressed(keyToPress, e)
                 && splitWord.length <= 4
                 && splitWord.length > 0) {
+                    console.log(document.getSelection());
                 const posX = e.clientX - 110;
                 const posY = e.clientY + scrollTop;
                 chrome.runtime.sendMessage({
