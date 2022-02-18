@@ -199,7 +199,6 @@
                 && checkKeyPressed(keyToPress, e)
                 && splitWord.length <= 4
                 && splitWord.length > 0) {
-                    console.log(document.getSelection());
                 const posX = e.clientX - 110;
                 const posY = e.clientY + scrollTop;
                 chrome.runtime.sendMessage({

@@ -28,10 +28,7 @@
             "./js/mark.min.js",
             "./js/foreground.js"
          ],
-         "matches": [
-            "http://*/*",
-            "https://*/*"
-         ],
+         "matches": ["<all_urls>"],
          "run_at": "document_end"
       }
    ],
@@ -44,7 +41,12 @@
       "contextMenus",
       "storage",
       "scripting",
-      "tabs"
+      "tabs",
+      "  "
    ],
+   "oauth2": {
+      "client_id": "client_id",
+      "scopes":[""]
+    },
    "manifest_version": 3
 }
