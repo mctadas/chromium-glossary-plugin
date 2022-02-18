@@ -25,6 +25,7 @@
             "*://*.teliacompanyspace.sharepoint.com/*"
          ],
          "js": [
+            "./js/mark.min.js",
             "./js/foreground.js"
          ],
          "matches": [

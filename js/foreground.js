@@ -1,5 +1,23 @@
 (function () {
 
+    chrome.runtime.sendMessage({
+        message: "get_glossory",
+        query: ""
+    }, response => {
+        var context = document.querySelector("body");
+        var instance = new Mark(context);
+        const arrOfWords = response.payload.map(word => word.Term);
+
+        instance.mark(arrOfWords, {
+            separateWordSearch: false,
+            accuracy: {
+                "value": "exactly",
+                "limiters": [",", "."]
+            }
+        });
+    });
+
+
     function printNestedValue(obj, word) {
         let element = ""
         for (var key in obj) {
@@ -187,7 +205,17 @@
             }
 
             const word = sel.toString();
-            if (word.length > 0 && checkKeyPressed(keyToPress, e)) {
+            const splitWord = word.split(/(\s+)/).filter(item => {
+                const temp = item.trim();
+                if(temp.length > 0) {
+                    return temp;
+                }
+            });
+
+            if (word.length > 0 
+                && checkKeyPressed(keyToPress, e) 
+                && splitWord.length <= 4
+                && splitWord.length > 0) {
                 const posX = e.clientX - 110;
                 const posY = e.clientY + scrollTop;
                 chrome.runtime.sendMessage({
@@ -204,10 +232,10 @@
 
                 chrome.storage.local.get('history', data => {
                     let unique = false
-                    if(data.history) {
+                    if (data.history) {
                         unique = data.history.includes(word)
                     }
-                    
+
                     if (!unique) {
                         let json = data.history || [];
                         if (json.length === 3) {

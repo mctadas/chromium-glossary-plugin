@@ -9,10 +9,11 @@ function configExtension() {
 				wordHistory: true
 			}
 			apiUrl = './../data/telia-glossary.json';
-			
+
 			chrome.storage.local.set({
 				options: defaultValues
 			});
+
 		} else {
 			apiUrl = data.options.apiUrl;
 		}
@@ -20,7 +21,7 @@ function configExtension() {
 		fetch(apiUrl)
 			.then((response) => response.json())
 			.then((json) => {
-				if(json.data) {
+				if (json.data) {
 					storeGlossary(json.data);
 				} else {
 					storeGlossary(json);
@@ -49,7 +50,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 	chrome.storage.local.get('terms', data => {
 		if (request.message === 'get_term') {
 			let query = request.query;
-			
+
 			let result_array = data.terms.filter(item => item.Term && item.Term.toLowerCase().includes(query.toLowerCase()));
 
 			if (result_array.length > 1) {
@@ -66,6 +67,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 	});
 	if (request.message === "update_glossory") {
 		configExtension();
+	}
+	if (request.message === "get_glossory") {
+		chrome.storage.local.get('terms', data => {
+			sendResponse({
+				message: 'success',
+				query: "Entire glossory",
+				payload: data.terms
+			});
+		});
 	}
 	return true;
 });
