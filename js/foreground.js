@@ -7,12 +7,12 @@
         var context = document.querySelector("body");
         var instance = new Mark(context);
         const arrOfWords = response.payload.map(word => word.Term);
-
         instance.mark(arrOfWords, {
             separateWordSearch: false,
+            acrossElements: true,
             accuracy: {
                 "value": "exactly",
-                "limiters": [",", "."]
+                "limiters": [""]
             }
         });
     });
