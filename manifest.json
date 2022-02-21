@@ -28,7 +28,9 @@
             "./js/mark.min.js",
             "./js/foreground.js"
          ],
-         "matches": ["<all_urls>"],
+         "matches": [
+            "<all_urls>"
+         ],
          "run_at": "document_end"
       }
    ],
@@ -42,11 +44,13 @@
       "storage",
       "scripting",
       "tabs",
-      "  "
+      "identity"
    ],
    "oauth2": {
-      "client_id": "client_id",
-      "scopes":[""]
-    },
+      "client_id": "794853014123-bbevflfo0os0k4nlkdp4eulor2e24c7e.apps.googleusercontent.com",
+      "scopes": [
+         "https://www.googleapis.com/auth/userinfo.email"
+      ]
+   },
    "manifest_version": 3
 }

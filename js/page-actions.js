@@ -1,6 +1,7 @@
 var shouldHistoryBeOn;
 
 (function () {
+	
 	chrome.storage.local.get('options', data => {
 		shouldHistoryBeOn = data.options && data.options.wordHistory;
 		appendToHistoryHTML()
@@ -12,11 +13,11 @@ function appendToHistoryHTML(shouldAddNew = false, word = "") {
 		chrome.storage.local.get('history', data => {
 			const parentElement = document.querySelector("#history");
 			parentElement.innerHTML = ""
-			if(shouldAddNew) {
+			if (shouldAddNew) {
 				var history_container = document.createElement('a');
 				history_container.setAttribute('id', 'history_link');
 				history_container.text = word;
-				parentElement.appendChild(history_container);		
+				parentElement.appendChild(history_container);
 			} else if (data.history) {
 				for (var i = 0; i < data.history.length; i++) {
 					var item = data.history[i];
@@ -33,10 +34,10 @@ function appendToHistoryHTML(shouldAddNew = false, word = "") {
 function addToHistoryLocalStorage(item) {
 	chrome.storage.local.get('history', data => {
 		let unique = false
-		if(data.history) {
+		if (data.history) {
 			unique = data.history.includes(item)
 		}
-		
+
 		if (!unique) {
 			let json = data.history || [];
 			if (json.length === 3) {
