@@ -18,22 +18,34 @@ function configExtension() {
 			apiUrl = data.options.apiUrl;
 		}
 
-		chrome.identity.getAuthToken({ interactive: true }, function (token) {
-			fetch(apiUrl, {
-				headers: new Headers({
-					'Authorization': 'Bearer ' + token,
-				}),
-			})
-				.then((response) => response.json())
-				.then((json) => {
-					if (json.data) {
-						storeGlossary(json.data);
-					} else {
-						storeGlossary(json);
-					}
-				});
+		/*	chrome.identity.getAuthToken({ interactive: true }, function (token) {
+				fetch(apiUrl, {
+					headers: new Headers({
+						'Authorization': 'Bearer ' + token,
+					}),
+				})
+					.then((response) => response.json())
+					.then((json) => {
+						if (json.data) {
+							storeGlossary(json.data);
+						} else {
+							storeGlossary(json);
+						}
+					});
+			}); 
+			*/
+
+
+		fetch(apiUrl)
+		.then((response) => response.json())
+		.then((json) => {
+			if (json.data) {
+				storeGlossary(json.data);
+			} else {
+				storeGlossary(json);
+			}
 		});
-	});
+});
 }
 
 chrome.runtime.onInstalled.addListener(() => {
