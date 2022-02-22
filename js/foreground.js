@@ -50,11 +50,11 @@
 
     function drawWrapper(top, left, shouldBeOnTop, maxHeight) {
         const wrapper = document.createElement("div");
-        const parentElement = window.getSelection().focusNode.parentNode.getBoundingClientRect();
         wrapper.id = "telia-bubble-host";
         wrapper.style.position = "absolute";
         wrapper.style.top = shouldBeOnTop ? top + "px" : (top - maxHeight) + "px";
         wrapper.style.left = left + "px";
+        wrapper.style.zIndex = "999999"
         return wrapper;
     }
 

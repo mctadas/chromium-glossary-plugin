@@ -37,15 +37,15 @@ function configExtension() {
 
 
 		fetch(apiUrl)
-		.then((response) => response.json())
-		.then((json) => {
-			if (json.data) {
-				storeGlossary(json.data);
-			} else {
-				storeGlossary(json);
-			}
-		});
-});
+			.then((response) => response.json())
+			.then((json) => {
+				if (json.data) {
+					storeGlossary(json.data);
+				} else {
+					storeGlossary(json);
+				}
+			});
+	});
 }
 
 chrome.runtime.onInstalled.addListener(() => {
