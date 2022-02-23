@@ -23,6 +23,7 @@
             });
             instance.markRegExp(new RegExp(`(?:^|\s)${regexWords}(?=\s|$)`), {
                 "exclude": [".telia-glossory-explanation-popup"],
+                "acrossElements": true
             });
         });
     }
