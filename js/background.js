@@ -96,5 +96,26 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			});
 		});
 	}
+	if (request.message === "selected_word") {
+			chrome.storage.local.get('history', data => {
+				const item = request.query;
+				let unique = false
+		
+				if (data.history) {
+					unique = data.history.includes(item)
+				}
+		
+				if (!unique) {
+					let json = data.history || [];
+					if (json.length === 3) {
+						json.shift();
+					}
+					json.push(item);
+					chrome.storage.local.set({
+						history: json
+					});
+				}
+			});
+	}
 	return true;
 });

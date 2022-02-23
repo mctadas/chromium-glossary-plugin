@@ -190,25 +190,6 @@
                 message: "selected_word",
                 query: word
             });
-
-
-            chrome.storage.local.get('history', data => {
-                let unique = false
-                if (data.history) {
-                    unique = data.history.includes(word)
-                }
-
-                if (!unique) {
-                    let json = data.history || [];
-                    if (json.length === 3) {
-                        json.shift();
-                    }
-                    json.push(word);
-                    chrome.storage.local.set({
-                        history: json
-                    });
-                }
-            });
         }
     }
 

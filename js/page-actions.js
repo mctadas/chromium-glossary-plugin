@@ -1,39 +1,33 @@
-var shouldHistoryBeOn;
-
 (function () {
-
-	chrome.storage.local.get('options', data => {
-		shouldHistoryBeOn = data.options && data.options.wordHistory;
-		appendToHistoryHTML()
-	});
-})();
-
-function appendToHistoryHTML(shouldAddNew = false, word = "") {
-	if (shouldHistoryBeOn) {
-		chrome.storage.local.get('history', data => {
-			const parentElement = document.querySelector("#history");
-			parentElement.innerHTML = ""
-			if (shouldAddNew) {
-				var history_container = document.createElement('a');
-				history_container.setAttribute('id', 'history_link');
-				history_container.text = word;
-				parentElement.appendChild(history_container);
-			} else if (data.history) {
-				for (var i = 0; i < data.history.length; i++) {
-					var item = data.history[i];
-					var history_container = document.createElement('a');
-					history_container.setAttribute('id', 'history_link');
-					history_container.text = item;
-					parentElement.appendChild(history_container);
-				}
+	chrome.storage.local.get(['history', 'options'], data => {
+		console.log(data)
+			var shouldHistoryBeOn = data.options && data.options.wordHistory;
+			if(shouldHistoryBeOn) {
+				appendToHistoryHTML(data.history)
 			}
 		});
+})();
+
+function appendToHistoryHTML(history) {
+	const parentElement = document.querySelector("#history");
+
+	while (parentElement.firstChild) {
+        parentElement.removeChild(parentElement.firstChild);
+    }
+	
+	for (var i = 0; i < history.length; i++) {
+		var item = history[i];
+		var history_container = document.createElement('a');
+		history_container.setAttribute('id', 'history_link');
+		history_container.text = item;
+		parentElement.appendChild(history_container);
 	}
 }
 
 function addToHistoryLocalStorage(item) {
 	chrome.storage.local.get('history', data => {
 		let unique = false
+
 		if (data.history) {
 			unique = data.history.includes(item)
 		}
@@ -47,7 +41,7 @@ function addToHistoryLocalStorage(item) {
 			chrome.storage.local.set({
 				history: json
 			});
-			appendToHistoryHTML(true, item);
+			appendToHistoryHTML(json);
 		}
 	});
 }
@@ -120,7 +114,6 @@ function printNestedValue(obj, word) {
 
 // Format response into web represeantation 
 function printTermInfo(JSON_data, word) {
-	console.log(JSON_data)
 	if (typeof JSON_data === 'object') {
 		if (JSON_data.length > 0) {
 			document.getElementById("glossary-info").innerHTML = "";
