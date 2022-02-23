@@ -21,7 +21,7 @@
                     regexWords += word.Term.trimLeft().trimRight() + "|"
                 }
             });
-            instance.markRegExp(new RegExp("(^|\s)" + regexWords + "(\s|$)"), {
+            instance.markRegExp(new RegExp(`(?:^|\s)${regexWords}(?=\s|$)`), {
                 "exclude": [".telia-glossory-explanation-popup"],
             });
         });
@@ -162,88 +162,132 @@
         htmlDoc.appendChild(wrapper);
     }
 
-    function checkKeyPressed(key, e) {
-        if (key !== "1") {
-            if (key === "2" && e.ctrlKey) {
-                return true;
-            } else if (key === "3" && e.altKey) {
-                return true;
-            } else if (key === "4" && e.shiftKey) {
-                return true;
-            } else {
-                return false;
-            }
+    function setupWrapper(posX, posY, fontSize, word) {
+        const currentPopup = document.getElementById("telia-bubble-host")
+
+        if (currentPopup) {
+            currentPopup.remove();
         }
-        return true;
-    }
 
-    async function loadConfig(e) {
-        await chrome.storage.local.get('options', data => {
-            let keyToPress = "";
-            let fontSize = "";
-            if (data.options) {
-                fontSize = data.options.fontSize + "px";
-                keyToPress = data.options.triggerKey;
-            }
-
-            var sel = window.getSelection()
-            var scrollTop = (window.pageYOffset !== undefined)
-                ? window.pageYOffset :
-                (document.documentElement || document.body.parentNode || document.body).scrollTop;
-            const currentPopup = document.getElementById("telia-bubble-host")
-
-            if (currentPopup) {
-                currentPopup.remove();
-            }
-
-            const word = sel.toString();
-            const splitWord = word.split(/(\s+)/).filter(item => {
-                const temp = item.trim();
-                if (temp.length > 0) {
-                    return temp;
-                }
-            });
-
-            if (word.length > 0
-                && checkKeyPressed(keyToPress, e)
-                && splitWord.length <= 4
-                && splitWord.length > 0) {
-                const posX = e.clientX - 110;
-                const posY = e.clientY + scrollTop;
-                chrome.runtime.sendMessage({
-                    message: "get_term",
-                    query: word
-                }, response => {
-                    drawFrame(posX, posY, response.payload, word, fontSize);
-                });
-
-                chrome.runtime.sendMessage({
-                    message: "selected_word",
-                    query: word
-                });
-
-                chrome.storage.local.get('history', data => {
-                    let unique = false
-                    if (data.history) {
-                        unique = data.history.includes(word)
-                    }
-
-                    if (!unique) {
-                        let json = data.history || [];
-                        if (json.length === 3) {
-                            json.shift();
-                        }
-                        json.push(word);
-                        chrome.storage.local.set({
-                            history: json
-                        });
-                    }
-                });
+        const splitWord = word.split(/(\s+)/).filter(item => {
+            const temp = item.trim();
+            if (temp.length > 0) {
+                return temp;
             }
         });
+
+        if (word.length > 0
+            && splitWord.length <= 4
+            && splitWord.length > 0) {
+            chrome.runtime.sendMessage({
+                message: "get_term",
+                query: word
+            }, response => {
+                drawFrame(posX, posY, response.payload, word, fontSize);
+            });
+
+            chrome.runtime.sendMessage({
+                message: "selected_word",
+                query: word
+            });
+
+
+            chrome.storage.local.get('history', data => {
+                let unique = false
+                if (data.history) {
+                    unique = data.history.includes(word)
+                }
+
+                if (!unique) {
+                    let json = data.history || [];
+                    if (json.length === 3) {
+                        json.shift();
+                    }
+                    json.push(word);
+                    chrome.storage.local.set({
+                        history: json
+                    });
+                }
+            });
+        }
     }
 
-    document.onmouseup = function async(e) {
-        loadConfig(e)
-    };
+    function getSelectionCoords(win) {
+        win = win || window;
+        var doc = win.document;
+        var sel = doc.selection, range, rects, rect;
+        var x = 0, y = 0;
+        if (sel) {
+            if (sel.type != "Control") {
+                range = sel.createRange();
+                range.collapse(true);
+                x = range.boundingLeft;
+                y = range.boundingTop;
+            }
+        } else if (win.getSelection) {
+            sel = win.getSelection();
+            if (sel.rangeCount) {
+                range = sel.getRangeAt(0).cloneRange();
+                if (range.getClientRects) {
+                    range.collapse(true);
+                    rects = range.getClientRects();
+                    if (rects.length > 0) {
+                        rect = rects[0];
+                    }
+                    x = rect.left;
+                    y = rect.top;
+                }
+                // Fall back to inserting a temporary element
+                if (x == 0 && y == 0) {
+                    var span = doc.createElement("span");
+                    if (span.getClientRects) {
+                        // Ensure span has dimensions and position by
+                        // adding a zero-width space character
+                        span.appendChild(doc.createTextNode("\u200b"));
+                        range.insertNode(span);
+                        rect = span.getClientRects()[0];
+                        x = rect.left;
+                        y = rect.top;
+                        var spanParent = span.parentNode;
+                        spanParent.removeChild(span);
+
+                        // Glue any broken text nodes back together
+                        spanParent.normalize();
+                    }
+                }
+            }
+        }
+        return { x: x, y: y };
+    }
+
+    chrome.storage.local.get('options', data => {
+        if (data.options.triggerKey === "1") {
+            document.onmouseup = function async(e) {
+                var sel = window.getSelection()
+                var scrollTop = (window.pageYOffset !== undefined)
+                    ? window.pageYOffset :
+                    (document.documentElement || document.body.parentNode || document.body).scrollTop;
+                const posX = e.clientX - 110;
+                const posY = e.clientY + scrollTop;
+                setupWrapper(posX, posY, data.options.fontSize, sel.toString())
+            }
+        } else {
+            window.onkeyup = function (event) {
+                console.log({event})
+                const selection = getSelectionCoords(window)
+                const word = window.getSelection().toString() || document.getSelection().toString();
+                if (window.getSelection()) {
+                    if (event.key === "Shift" && data.options.triggerKey === "4") {
+                        setupWrapper(selection.x, selection.y, data.options.fontSize, word)
+                    }
+                    if (event.key === "Alt" && data.options.triggerKey === "3") {
+                        setupWrapper(selection.x, selection.y, data.options.fontSize, word)
+                    }
+                    if (event.key === "Control" && data.options.triggerKey === "2") {
+                        setupWrapper(selection.x, selection.y, data.options.fontSize, word)
+                    }
+                }
+            }
+        }
+    });
 })();
