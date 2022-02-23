@@ -273,7 +273,6 @@
             }
         } else {
             window.onkeyup = function (event) {
-                console.log({event})
                 const selection = getSelectionCoords(window)
                 const word = window.getSelection().toString() || document.getSelection().toString();
                 if (window.getSelection()) {
