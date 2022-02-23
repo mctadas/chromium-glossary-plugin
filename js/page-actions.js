@@ -1,7 +1,7 @@
 var shouldHistoryBeOn;
 
 (function () {
-	
+
 	chrome.storage.local.get('options', data => {
 		shouldHistoryBeOn = data.options && data.options.wordHistory;
 		appendToHistoryHTML()
@@ -77,6 +77,16 @@ document.querySelector("#search-term").addEventListener("submit", function (e) {
 	}
 });
 
+function isValidHttpUrl(string) {
+	let url;
+	try {
+		url = new URL(string);
+	} catch (_) {
+		return false;
+	}
+	return (url.protocol === "http:" || url.protocol === "https:") && (url.href == string || url.origin == string);
+}
+
 function printNestedValue(obj, word) {
 	let element = ""
 	for (var key in obj) {
@@ -86,17 +96,21 @@ function printNestedValue(obj, word) {
 		if (typeof obj[key] === 'string' && obj[key] !== "") {
 			const reg = new RegExp(word, 'gi');
 			const urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
-			let highLightWord = obj[key].replace(reg, function (str) {
-				return "<bdi style='background-color:yellow;color:#000'>" + str + "</bdi>"
-			});
-
-			highLightWord = highLightWord.replace(urlRegex, function (url) {
-				let hyperlink = url;
-				if (!hyperlink.match('^https?:\/\/')) {
-					hyperlink = 'http://' + hyperlink;
-				}
-				return '<a href="' + hyperlink + '" target="_blank" rel="noopener noreferrer">' + url + '</a>'
-			});
+			console.log(obj[key])
+			let highLightWord = obj[key];
+			if (!obj[key].match(new RegExp(urlRegex))) {
+				highLightWord = obj[key].replace(reg, function (str) {
+					return "<bdi style='background-color:yellow;color:#000'>" + str + "</bdi>"
+				});
+			} else {
+				highLightWord = highLightWord.replace(urlRegex, function (url) {
+					let hyperlink = url;
+					if (!hyperlink.match('^https?:\/\/')) {
+						hyperlink = 'http://' + hyperlink;
+					}
+					return '<a href="' + hyperlink + '" target="_blank" rel="noopener noreferrer">' + url + '</a>'
+				});
+			}
 
 			element += "<span style='display:block;'><b>" + key + ":</b> " + highLightWord + "</span>"
 		}
@@ -106,6 +120,7 @@ function printNestedValue(obj, word) {
 
 // Format response into web represeantation 
 function printTermInfo(JSON_data, word) {
+	console.log(JSON_data)
 	if (typeof JSON_data === 'object') {
 		if (JSON_data.length > 0) {
 			document.getElementById("glossary-info").innerHTML = "";

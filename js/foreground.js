@@ -11,7 +11,7 @@
             message: "get_glossory",
             query: ""
         }, response => {
-            var context = document.querySelector("html");
+            var context = document.querySelector("body");
             var instance = new Mark(context);
             let regexWords = "";
             response.payload.map((word, i) => {
@@ -22,6 +22,7 @@
                 }
             });
             instance.markRegExp(new RegExp("(^|\s)" + regexWords + "(\s|$)"), {
+                "exclude": [".telia-glossory-explanation-popup"],
             });
         });
     }
