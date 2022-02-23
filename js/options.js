@@ -9,6 +9,7 @@ const api_input = document.getElementById("api_url");
 const bubble = document.getElementById("bubble");
 const font_size = document.getElementById("font_size");
 const word_history = document.getElementById("word_history");
+const auto_select = document.getElementById("autoselect");
 
 submit.addEventListener("click", saveFunc);
 reset.addEventListener("click", resetFunc);
@@ -20,6 +21,7 @@ function loadConfig() {
             bubble.value = data.options.triggerKey;
             font_size.value = data.options.fontSize;
             word_history.checked = data.options.wordHistory;
+            auto_select.value = data.options.auto_select;
         }
     });
 }
@@ -30,7 +32,8 @@ function saveFunc() {
             apiUrl: api_input.value,
             triggerKey: bubble.value,
             fontSize: font_size.value,
-            wordHistory: word_history.checked
+            wordHistory: word_history.checked,
+            auto_select: auto_select.value
         }
     });
     chrome.runtime.sendMessage({
@@ -51,7 +54,8 @@ function resetFunc() {
         apiUrl: './../data/telia-glossary.json',
         triggerKey: "1",
         fontSize: "11",
-        wordHistory: true
+        wordHistory: true,
+        auto_select: "on"
     }
 
     chrome.storage.local.set({

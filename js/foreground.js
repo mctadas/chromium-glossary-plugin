@@ -1,22 +1,30 @@
 (function () {
-
-    chrome.runtime.sendMessage({
-        message: "get_glossory",
-        query: ""
-    }, response => {
-        var context = document.querySelector("body");
-        var instance = new Mark(context);
-        const arrOfWords = response.payload.map(word => word.Term);
-        instance.mark(arrOfWords, {
-            separateWordSearch: false,
-            acrossElements: true,
-            accuracy: {
-                "value": "exactly",
-                "limiters": [""]
-            }
-        });
+    chrome.storage.local.get('options', data => {
+        const shouldSearch = data.options && data.options.auto_select;
+        if (shouldSearch === "on") {
+            searchPage();
+        }
     });
 
+    function searchPage() {
+        chrome.runtime.sendMessage({
+            message: "get_glossory",
+            query: ""
+        }, response => {
+            var context = document.querySelector("html");
+            var instance = new Mark(context);
+            let regexWords = "";
+            response.payload.map((word, i) => {
+                if (i + 1 === response.payload.length) {
+                    regexWords += word.Term.trimLeft().trimRight()
+                } else {
+                    regexWords += word.Term.trimLeft().trimRight() + "|"
+                }
+            });
+            instance.markRegExp(new RegExp("(^|\s)" + regexWords + "(\s|$)"), {
+            });
+        });
+    }
 
     function printNestedValue(obj, word) {
         let element = ""
@@ -46,7 +54,7 @@
     function isElementXPercentInViewport(maxHeight, leftPosition) {
         const parentElement = window.getSelection().focusNode.parentNode.getBoundingClientRect();
         return (parentElement.y > 0 && parentElement.y + maxHeight) < window.innerHeight;
-      };
+    };
 
     function drawWrapper(top, left, shouldBeOnTop, maxHeight) {
         const wrapper = document.createElement("div");
