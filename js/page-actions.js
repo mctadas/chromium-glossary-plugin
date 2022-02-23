@@ -96,7 +96,7 @@ function printNestedValue(obj, word) {
 		if (typeof obj[key] === 'string' && obj[key] !== "") {
 			const reg = new RegExp(word, 'gi');
 			const urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
-			console.log(obj[key])
+
 			let highLightWord = obj[key];
 			if (!obj[key].match(new RegExp(urlRegex))) {
 				highLightWord = obj[key].replace(reg, function (str) {
