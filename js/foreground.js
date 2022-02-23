@@ -1,11 +1,5 @@
 (function () {
-    chrome.storage.local.get('options', data => {
-        const shouldSearch = data.options && data.options.auto_select;
-        if (shouldSearch === "on") {
-            searchPage();
-        }
-    });
-
+    var pageScanned = false;
     function searchPage() {
         chrome.runtime.sendMessage({
             message: "get_glossory",
@@ -243,8 +237,8 @@
     }
 
     chrome.storage.local.get('options', data => {
-        if (data.options.triggerKey === "1") {
-            document.onmouseup = function async(e) {
+        document.onmouseup = function async(e) {
+            if (data.options.triggerKey === "1") {
                 var sel = window.getSelection()
                 var scrollTop = (window.pageYOffset !== undefined)
                     ? window.pageYOffset :
@@ -253,19 +247,26 @@
                 const posY = e.clientY + scrollTop;
                 setupWrapper(posX, posY, data.options.fontSize, sel.toString())
             }
-        } else {
-            window.onkeyup = function (event) {
-                const selection = getSelectionCoords(window)
-                const word = window.getSelection().toString() || document.getSelection().toString();
-                if (window.getSelection()) {
-                    if (event.key === "Alt" && data.options.triggerKey === "3") {
-                        setupWrapper(selection.x, selection.y, data.options.fontSize, word)
-                    }
-                    if (event.key === "Control" && data.options.triggerKey === "2") {
-                        setupWrapper(selection.x, selection.y, data.options.fontSize, word)
-                    }
+        }
+        window.onkeyup = function (event) {
+            const selection = getSelectionCoords(window)
+            const word = window.getSelection().toString() || document.getSelection().toString();
+            if (window.getSelection()) {
+                if (event.key === "Alt" && data.options.triggerKey === "3") {
+                    setupWrapper(selection.x, selection.y, data.options.fontSize, word)
+                }
+                if (event.key === "Control" && data.options.triggerKey === "2") {
+                    setupWrapper(selection.x, selection.y, data.options.fontSize, word)
                 }
             }
+
+            const shouldSearch = data.options && data.options.auto_select;
+            if (shouldSearch === "on" && event.key === "Alt" && !pageScanned) {
+                alert("Scanning page...")
+                searchPage();
+                pageScanned = true;
+            }
         }
+
     });
 })();
