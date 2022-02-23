@@ -21,9 +21,6 @@
    "content_scripts": [
       {
          "all_frames": true,
-         "exclude_matches": [
-            "*://*.teliacompanyspace.sharepoint.com/*"
-         ],
          "js": [
             "./js/mark.min.js",
             "./js/foreground.js"
