@@ -258,9 +258,6 @@
                 const selection = getSelectionCoords(window)
                 const word = window.getSelection().toString() || document.getSelection().toString();
                 if (window.getSelection()) {
-                    if (event.key === "Shift" && data.options.triggerKey === "4") {
-                        setupWrapper(selection.x, selection.y, data.options.fontSize, word)
-                    }
                     if (event.key === "Alt" && data.options.triggerKey === "3") {
                         setupWrapper(selection.x, selection.y, data.options.fontSize, word)
                     }
