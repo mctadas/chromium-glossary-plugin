@@ -6,7 +6,8 @@ function configExtension() {
 				apiUrl: './../data/telia-glossary.json',
 				triggerKey: "1",
 				fontSize: "11",
-				wordHistory: true
+				wordHistory: true,
+				auto_select: "on"
 			}
 			apiUrl = './../data/telia-glossary.json';
 
