@@ -32,7 +32,7 @@
                 const reg = new RegExp(word, 'gi');
                 const urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
                 let highLightWord = obj[key].replace(reg, function (str) {
-                    return "<bdi style='background-color:yellow;color:#000'>" + str + "</bdi>"
+                    return "<bdi style='background-color:#ffcd65;color:#000'>" + str + "</bdi>"
                 });
                 highLightWord = highLightWord.replace(urlRegex, function (url) {
                     let hyperlink = url;
@@ -50,7 +50,7 @@
     function isElementXPercentInViewport(maxHeight, leftPosition) {
         const parentElement = window.getSelection().focusNode.parentNode.getBoundingClientRect();
         return (parentElement.y > 0 && parentElement.y + maxHeight) < window.innerHeight;
-    };
+    }
 
     function drawWrapper(top, left, shouldBeOnTop, maxHeight) {
         const wrapper = document.createElement("div");
@@ -72,7 +72,8 @@
         floatingContainer.style.background = "#fff";
         floatingContainer.style.color = "#000";
         floatingContainer.style.boxShadow = "0 8px 17px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%)";
-        floatingContainer.style.border = "1px solid #000";
+        floatingContainer.style.border = "1px solid #ccc";
+        floatingContainer.style.fontFamily = "sans-serif";
         return floatingContainer;
     }
 
@@ -80,20 +81,21 @@
         const content = document.createElement("div");
         content.id = "telia-bubble-content";
         content.style.width = "100%";
-        content.style.marginTop = "10px"
-        content.style.padding = "5px";
+        content.style.padding = "10px";
+        content.style.boxSizing = "border-box";
 
         return content;
     }
 
     function drawCloseButton() {
         const btn = document.createElement("span");
-        btn.innerHTML = "X";
-        btn.style.marginRight = "10px";
+        btn.innerHTML = "×";
         btn.style.float = "right";
-        btn.style.marginTop = "5px";
-        btn.style.color = "#000";
+        btn.style.margin = "10px 10px 5px";
+        btn.style.color = "#222";
         btn.style.cursor = "pointer";
+        btn.style.lineHeight = ".5";
+        btn.style.fontSize = "30px";
         btn.onclick = function (e) {
             const target = e.target;
             target.parentNode.parentNode.remove();
@@ -106,28 +108,43 @@
         main.id = "telia-bubble-main-dictionary";
         main.style.overflowY = "auto";
         main.style.maxHeight = "200px";
+        main.style.width = "100%";
+
         const mainTitle = document.createElement("div");
         mainTitle.id = "telia-bubble-main-dictionary-title";
-        mainTitle.style.color = "rgb(228, 21, 19)";
+        mainTitle.style.color = "#990ae3";
+        mainTitle.style.fontWeight = "bold";
         mainTitle.style.display = "block";
         mainTitle.innerHTML = word;
 
-        const numberOfHits = document.createElement("span");
-        numberOfHits.style.float = "right";
+        const numberOfHits = document.createElement("div");
         numberOfHits.innerHTML = "Number of hits: " + payload.length;
-        numberOfHits.style.color = "rgb(228, 21, 19)";
+        numberOfHits.style.color = "#222";
+        numberOfHits.style.fontWeight = "bold";
+        numberOfHits.style.marginRight = "5px";
 
-        main.appendChild(numberOfHits);
-        main.appendChild(mainTitle);
+        const titleWrapper = document.createElement("div");
+        titleWrapper.style.display = "flex";
+        titleWrapper.style.flexWrap = "wrap";
+        titleWrapper.style.justifyContent = "space-between";
+        titleWrapper.style.alignItems = "center";
+        titleWrapper.style.fontSize = "16px";
+
+        titleWrapper.appendChild(numberOfHits);
+        titleWrapper.appendChild(mainTitle);
+
+        main.appendChild(titleWrapper);
+
         if (payload.length > 0) {
             for (var i = 0; i < payload.length; i++) {
                 const mainWords = document.createElement("div");
                 mainWords.innerHTML = printNestedValue(payload[i], word)
                 mainWords.style.marginTop = "10px";
-                mainWords.style.marginTop = "10px";
-                mainWords.style.padding = "10px 10px"
-                mainWords.style.background = "#f1e3ff";
+                mainWords.style.padding = "10px"
+                mainWords.style.background = "#f2f2f2";
                 mainWords.style.fontSize = fontSize;
+                mainWords.style.borderRadius = "8px";
+                mainWords.style.border = "1px solid #ccc";
                 main.appendChild(mainWords)
             }
         } else {

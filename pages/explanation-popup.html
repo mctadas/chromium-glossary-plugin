@@ -5,79 +5,165 @@
 	<meta charset="utf8" />
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap">
 	<style type="text/css">
-		#pebble {
-			position: absolute;
-			top: 10px;
+		* {
+			box-sizing: border-box;
+			font-size: 14px;
+			color: #222;
+			font-weight: 400;
+			margin: 0;
+		}
+
+		body {
+			padding: 20px;
+		}
+
+		#logo {
+			display: flex;
+			align-items: center;
 		}
 
 		#title {
-			position: relative;
-			left: 42px;
-			margin-top: 10px;
+			margin-left: 15px;
+			font-size: 24px;
+			line-height: 32px;
+			font-weight: 700;
+			text-transform: uppercase;
+		}
+
+		header {
+			margin-bottom: 7px;
+		}
+
+		#number_of_hits {
+			margin: 10px 0 0;
+			font-weight: bold;
 		}
 
 		#answer {
 			border-bottom: 1px dashed #ccc;
-			margin-bottom: 5px;
-			padding-bottom: 5px;
-			font-size: 1.1em;
+			padding-bottom: 10px;
 			font-style: italic;
 			font-weight: bold;
-			color: #018282;
+			color: #990ae3;
+		}
+
+		form {
+			display: flex;
+			width: 100%;
+			margin-top: 20px;
+		}
+
+		input {
+			height: 50px;
+			border: 1px solid #222;
+			width: 100%;
+			line-height: 18px;
+			padding: 14px 15px;
+			outline: 0;
+			cursor: pointer;
+		}
+
+		input[type="submit"] {
+			margin-left: 15px;
+			color: #fff;
+			background-color: #990ae3;
+			outline: 0;
+			padding: 13px 24px;
+			font-size: 15px;
+			line-height: 18px;
+			font-weight: 600;
+			border-radius: 25px;
+			transition: background-color 0.15s ease-in-out;
+			border-color: transparent;
+			text-shadow: none;
+			width: auto;
+		}
+
+		input[type="submit"]:hover, input[type="submit"]:focus {
+			background-color: #a931e7;
+		}
+
+		#press_enter {
+			padding: 7px 0 2px;
+			font-size: 12px;
 		}
 
 		.ce_term_info {
-			margin: 10px 10px 30px 10px;
-			padding: 10px 10px;
-			background: #f1e3ff;
-			border-radius: 20px;
+			margin: 20px 0;
+			padding: 10px;
+			background: #f2f2f2;
+			border-radius: 8px;
+			border: 1px solid #ccc;
+		}
+
+		.ce_term_info:last-of-type {
+			margin-bottom: 0;
 		}
 
 		#history_link {
 			cursor: pointer;
-			color: blue;
+			color: #990ae3;
 			padding-right: 10px;
 		}
 
+		#history_link:hover, #history_link:focus {
+			text-decoration: underline;
+		}
+
 		h4.historytxt {
-			padding-bottom: 0;
-			margin-bottom: 0;
+			margin: 20px 0 0;
+			font-weight: bold;
 		}
 
 		#history {
-			padding-bottom: 10px;
+			margin-bottom: 20px;
 		}
 
 		#audio_pronunciation {
 			background: url('./../images/pronunciation.png') no-repeat;
 			display: inline-block;
 			height: 16px;
-			margin: 0 15px 0 0;
+			margin: 0 20px 0 0;
 			padding: 0;
 			background-size: contain;
 			vertical-align: middle;
 			width: 25px;
 			cursor: pointer;
-			margin-left: 20px;
 		}
 
 		.title_h1,
 		.ce_term_title {
 			display: inline-block;
+			font-weight: bold;
+			font-size: 16px;
 		}
 
 		.ca_title_container {
 			border-bottom: 1px dashed #ccc;
-			margin-bottom: 5px;
-			padding-bottom: 5px;
+			margin-bottom: 10px;
+			padding-bottom: 7px;
+		}
+
+		#meaning span:not(:last-of-type) {
+			margin-bottom: 10px;
+		}
+
+		b {
+			font-weight: bold;
+		}
+
+		#footer-line a:hover, #footer-line a:focus {
+			text-decoration: none;
 		}
 	</style>
 
 </head>
 
-<body style="width:400px;font-size:1em" class="telia-glossory-explanation-popup">
-	<img id=pebble src="../images/telia-pebble.jpg" height="30px">
-	<h2 id=title>Telia glossary</h2>
+<body style="width:480px;font-size:1em;max-width: 100%;" class="telia-glossory-explanation-popup">
+	<div id="logo">
+		<img id=pebble src="../images/telia-pebble.jpg" height="30px">
+		<h2 id=title>Telia glossary</h2>
+	</div>
 	<!-- 
 	<p>To see the Telia's definition of the term, <b><i>double click</i></b> on the word and pupup buble should appear.</p>
 	-->
@@ -86,7 +172,7 @@
 			<input id="query" size="24">
 			<input type="submit" value="Define" id="submitbtn">
 		</form>
-		<div id="press_enter" style="font-size:0.8em">Press Enter to get term description.</div>
+		<div id="press_enter">Press Enter to get term description.</div>
 		<div id="number_of_hits"></div>
 	</header>
 
@@ -95,7 +181,6 @@
 		<div id=glossary-info></div>
 	</article>
 
-	<br>
 	<h4 class="historytxt">History</h4>
 	<div id="history">
 
