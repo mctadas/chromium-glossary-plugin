@@ -1,55 +1,127 @@
+* {
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #222;
+    font-weight: 400;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+}
+
 body {
-    background: #777 url(../images/bg.png);
-    line-height: 1.45em;
     margin: 0;
     padding: 0;
 }
+
+.gwg {
+    background: rgba(0, 0, 0, .7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
 .container {
     width: 560px;
-    margin: 20px auto 20px auto;
-    border-radius: 10px;
-    box-shadow: 0 0 15px 7px #555;
+    margin: 20px auto;
+    max-width: 100%;
+    max-height: 100%;
 }
 
 .header {
-    background-color: #88070D;
-    border: 3px solid #5f050a;
-    border-bottom: none;
-    border-radius: 7px 7px 0 0;
-    color: #fff;
+    background: #fff;
 }
 
 .header h1 {
-    padding: 20px;
-    margin: 0px;
+    padding: 40px 30px 30px;
+    margin: 0;
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
 .page {
-    background-color: #FFF;
-    border: 3px solid #444;
+    background-color: #fff;
     border-top-width: 0;
-    border-radius: 0 0 8px 8px;
-    padding: 10px 20px;
+    padding: 0 30px 40px;
 }
 
 label, span {
-    font-size: 14px;
-    font-weight: bold;
+    margin-bottom: 7px;
+    display: inline-block;
 }
 
-.settings_container {
-    padding-top: 10px;
-    padding-bottom: 10px;
+label {
+    line-height: 20px;
+}
+
+input:not([type="checkbox"]), select {
+    height: 50px;
+    border: 1px solid #222;
+    width: 100%;
+    max-width: 100%;
+    font-size: 15px;
+    line-height: 18px;
+    padding: 14px 15px;
+    outline: 0;
+    cursor: pointer;
+}
+
+input[type="text"]:focus-visible {
+    outline: 0;
+}
+
+input[type="checkbox"], input[type="checkbox"] + label {
+    vertical-align: middle;
+}
+
+input[type="checkbox"] + label {
+    margin: 0;
+}
+
+select {
+    appearance: none;
+    background: url(https://cdn1.iconfinder.com/data/icons/general-ui-outlined-thick/24/chevron-down-256.png) no-repeat top 15px right 15px/20px;
+}
+
+.settings_container:not(:first-child) {
+    padding-top: 20px;
+}
+
+.button_container {
+    margin-top: 30px;
 }
 
 button {
-    background-color: #EAE2D4;
-    border: 1px solid #CCCAD1;
-    padding: 8px 16px;
-    color: #333;
+    color: #fff;
+    background-color: #990ae3;
+    outline: 0;
+    padding: 13px 24px;
+    max-width: 100%;
+    font-size: 15px;
+    line-height: 18px;
     font-weight: 600;
-    margin: 0 8px 0 0;
-    outline: none;
+    border-radius: 25px;
+    transition: background-color 0.15s ease-in-out;
+    vertical-align: middle;
     cursor: pointer;
-    font-size: 13px;
+    border-color: transparent;
+    text-shadow: none;
+}
+
+button:hover, button:focus {
+    background-color: #a931e7;
+}
+
+#reset {
+    background-color: rgba(34,34,34,.04);
+    color: #990ae3;
+    margin-left: 20px;
+}
+
+#reset:hover, #reset:focus {
+    background-color: rgba(34,34,34,.08);
 }

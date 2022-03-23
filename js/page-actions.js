@@ -94,7 +94,7 @@ function printNestedValue(obj, word) {
 			let highLightWord = obj[key];
 			if (!obj[key].match(new RegExp(urlRegex))) {
 				highLightWord = obj[key].replace(reg, function (str) {
-					return "<bdi style='background-color:yellow;color:#000'>" + str + "</bdi>"
+					return "<bdi style='background-color:#ffcd65;color:#000'>" + str + "</bdi>"
 				});
 			} else {
 				highLightWord = highLightWord.replace(urlRegex, function (url) {
